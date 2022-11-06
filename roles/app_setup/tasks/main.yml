@@ -1,0 +1,44 @@
+- name: Create tealdb directory
+  file:
+    path: /opt/tealdb
+    state: directory
+  tags:
+    - app_setup
+
+- name: Git checkout of pptools code
+  git:
+    repo: "https://{{ github_username }}:{{ github_token }}@github.com/tangledhelix/tealdb.git"
+    dest: /opt/tealdb
+  tags:
+    - app_setup
+
+- name: Application secrets module
+  template:
+    src: secrets.py.j2
+    dest: /opt/tealdb/turnitteal/secrets.py
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - app_setup
+
+- name: Django migration
+  shell: python3 manage.py migrate
+  args:
+    chdir: /opt/tealdb
+  tags:
+    - app_setup
+
+- name: Django bower install
+  shell: python3 manage.py bower install
+  args:
+    chdir: /opt/tealdb
+  tags:
+    - app_setup
+
+- name: Django collect static assets
+  shell: python3 manage.py collectstatic --no-input
+  args:
+    chdir: /opt/tealdb
+  tags:
+    - app_setup

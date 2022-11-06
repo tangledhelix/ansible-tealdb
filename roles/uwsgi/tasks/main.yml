@@ -1,0 +1,26 @@
+- name: Install uwsgi configuration file
+  template:
+    src: tealdb.ini.j2
+    dest: /etc/uwsgi/apps-available/tealdb.ini
+    mode: 0644
+    owner: root
+    group: root
+  notify: Restart uwsgi
+  tags:
+    - uwsgi
+
+- name: Enable uwsgi configuration file
+  file:
+    src: /etc/uwsgi/apps-available/tealdb.ini
+    dest: /etc/uwsgi/apps-enabled/tealdb.ini
+    state: link
+  tags:
+    - uwsgi
+
+- name: Make sure uwsgi service is running
+  systemd:
+    state: started
+    enabled: true
+    name: uwsgi
+  tags:
+    - uwsgi

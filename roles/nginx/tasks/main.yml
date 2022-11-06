@@ -1,0 +1,88 @@
+- name: Create letsencrypt directory
+  file:
+    name: /var/www/letsencrypt
+    state: directory
+  tags:
+    - nginx
+
+- name: Remove default nginx config
+  file:
+    name: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Restart nginx
+  tags:
+    - nginx
+
+- name: Nginx http config
+  template:
+    src: http.j2
+    dest: /etc/nginx/sites-available/http
+    mode: 0644
+    owner: root
+    group: root
+  notify: Restart nginx
+  tags:
+    - nginx
+
+- name: Enable Nginx http config
+  file:
+    src: /etc/nginx/sites-available/http
+    dest: /etc/nginx/sites-enabled/http
+    state: link
+  tags:
+    - nginx
+
+- name: Restart nginx for letsencrypt
+  service:
+    name: nginx
+    state: restarted
+  tags:
+    - nginx
+
+- name: Create letsencrypt certificate
+  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m dan@tangledhelix.com --agree-tos -d {{ inventory_hostname }}
+  args:
+    creates: /etc/letsencrypt/live/{{ inventory_hostname }}
+  tags:
+    - nginx
+
+- name: Generate dhparams
+  shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
+  args:
+    creates: /etc/nginx/dhparams.pem
+  tags:
+    - nginx
+
+- name: Nginx tealdb site config
+  template:
+    src: https.j2
+    dest: /etc/nginx/sites-available/tealdb-https
+    mode: 0644
+    owner: root
+    group: root
+  notify: Restart nginx
+  tags:
+    - nginx
+
+- name: Enable Nginx tealdb site config
+  file:
+    src: /etc/nginx/sites-available/tealdb-https
+    dest: /etc/nginx/sites-enabled/tealdb-https
+    state: link
+  tags:
+    - nginx
+
+- name: Restart nginx for https
+  service:
+    name: nginx
+    state: restarted
+  tags:
+    - nginx
+
+- name: Make sure nginx service is running
+  systemd:
+    state: started
+    enabled: true
+    name: nginx
+  tags:
+    - nginx

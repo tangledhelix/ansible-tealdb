@@ -1,0 +1,12 @@
+---
+- hosts: all
+  vars_files:
+    - "./vars/postgres.yml"
+    - "./vars/secrets.yml"
+  roles:
+    - firewall
+    - packages
+    - postgres
+    - app_setup
+    - uwsgi
+    - nginx

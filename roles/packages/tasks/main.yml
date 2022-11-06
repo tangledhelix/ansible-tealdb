@@ -1,0 +1,44 @@
+- name: Update Repository cache
+  shell: apt-get update
+  tags:
+    - packages
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nodejs
+    - npm
+    - python3-pip
+    - postgresql
+    - uwsgi
+    - uwsgi-plugin-python3
+    - nginx
+    - letsencrypt
+  tags:
+    - packages
+
+- name: Install Python packages
+  pip:
+    name: "{{ item }}"
+    state: present
+    executable: pip3
+  with_items:
+    - "asgiref==3.5.2"
+    - "Django==4.0.8"
+    - "django-bower==5.2.0"
+    - "psycopg2-binary==2.9.3"
+    - "PyYAML==6.0"
+    - "six==1.16.0"
+    - "sqlparse==0.4.3"
+    - "uWSGI==2.0.20"
+  tags:
+    - packages
+
+- name: Install "bower" node.js package globally.
+  npm:
+    name: bower
+    global: yes
+  tags:
+    - packages
