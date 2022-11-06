@@ -31,6 +31,9 @@ server {
 
     server_name {{ inventory_hostname }};
 
+    access_log /var/log/nginx/{{ inventory_hostname }}-access.log;
+    error_log /var/log/nginx/{{ inventory_hostname }}-error.log;
+
     location = /favicon.ico { access_log off; log_not_found off; }
 
     location /static {
