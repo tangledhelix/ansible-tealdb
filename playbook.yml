@@ -1,6 +1,7 @@
 ---
 - hosts: all
   vars_files:
+    - "./vars/tealdb.yml"
     - "./vars/postgres.yml"
     - "./vars/secrets.yml"
   roles:
@@ -10,3 +11,4 @@
     - app_setup
     - uwsgi
     - nginx
+    - cron

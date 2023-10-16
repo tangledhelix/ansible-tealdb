@@ -1,0 +1,7 @@
+- name: Add letsencrypt cronjob for cert renewal
+  cron:
+    name: letsencrypt_renewal_tealdb
+    special_time: weekly
+    job: letsencrypt --renew-by-default certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ inventory_hostname }} && systemctl reload nginx.service
+  tags:
+    - cron
