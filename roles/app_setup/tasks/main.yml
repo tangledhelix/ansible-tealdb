@@ -5,7 +5,7 @@
   tags:
     - app_setup
 
-- name: Git checkout of pptools code
+- name: Git checkout of tealdb code
   git:
     repo: "https://{{ github_username }}:{{ github_token }}@github.com/tangledhelix/tealdb.git"
     dest: /opt/tealdb
@@ -29,8 +29,8 @@
   tags:
     - app_setup
 
-- name: Django bower install
-  shell: python3 manage.py bower install
+- name: Django yarn install
+  shell: python3 manage.py yarn install
   args:
     chdir: /opt/tealdb
   tags:
