@@ -1,12 +1,12 @@
 [uwsgi]
 
-chdir = /opt/tealdb
+chdir = /opt/{{ app_name }}
 module = turnitteal.wsgi:application
 
 master = true
 processes = 5
 
-socket = /tmp/turnitteal.sock
+socket = /tmp/{{ app_name }}.sock
 chmod-socket = 666
 
 vacuum = true

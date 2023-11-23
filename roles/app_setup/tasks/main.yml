@@ -1,6 +1,6 @@
 - name: Create tealdb directory
   file:
-    path: /opt/tealdb
+    path: "{{ base_dir }}"
     state: directory
   tags:
     - app_setup
@@ -8,14 +8,15 @@
 - name: Git checkout of tealdb code
   git:
     repo: "https://{{ github_username }}:{{ github_token }}@github.com/tangledhelix/tealdb.git"
-    dest: /opt/tealdb
+    dest: "{{ base_dir }}"
+    version: "{{ tealdb_git_branch }}"
   tags:
     - app_setup
 
 - name: Application secrets module
   template:
     src: secrets.py.j2
-    dest: /opt/tealdb/turnitteal/secrets.py
+    dest: "{{ base_dir }}/turnitteal/secrets.py"
     mode: 0644
     owner: root
     group: root
@@ -25,20 +26,20 @@
 - name: Django migration
   shell: python3 manage.py migrate
   args:
-    chdir: /opt/tealdb
+    chdir: "{{ base_dir }}"
   tags:
     - app_setup
 
 - name: Django yarn install
   shell: python3 manage.py yarn install
   args:
-    chdir: /opt/tealdb
+    chdir: "{{ base_dir }}"
   tags:
     - app_setup
 
 - name: Django collect static assets
   shell: python3 manage.py collectstatic --no-input
   args:
-    chdir: /opt/tealdb
+    chdir: "{{ base_dir }}"
   tags:
     - app_setup

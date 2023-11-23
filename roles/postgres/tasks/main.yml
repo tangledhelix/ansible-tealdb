@@ -11,7 +11,7 @@
 - name: "Create app database"
   postgresql_db:
     state: present
-    name: "{{ db_name }}"
+    name: "{{ app_name }}"
   become: yes
   become_user: postgres
   tags:
@@ -20,7 +20,7 @@
 - name: "Create db user"
   postgresql_user:
     state: present
-    name: "{{ db_user }}"
+    name: "{{ app_name }}"
     password: "{{ db_password }}"
   become: yes
   become_user: postgres
@@ -30,8 +30,8 @@
 - name: "Grant db user access to app db"
   postgresql_privs:
     type: database
-    database: "{{ db_name }}"
-    roles: "{{ db_user }}"
+    database: "{{ app_name }}"
+    roles: "{{ app_name }}"
     grant_option: no
     privs: all
   become: yes
@@ -43,9 +43,9 @@
   postgresql_pg_hba:
     dest: "/etc/postgresql/14/main/pg_hba.conf"
     contype: host
-    databases: all
+    databases: "{{ app_name }}"
     method: md5
-    users: "{{ db_user }}"
+    users: "{{ app_name }}"
     create: true
   become: yes
   become_user: postgres

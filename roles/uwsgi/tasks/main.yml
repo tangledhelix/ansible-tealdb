@@ -1,7 +1,7 @@
 - name: Install uwsgi configuration file
   template:
     src: tealdb.ini.j2
-    dest: /etc/uwsgi/apps-available/tealdb.ini
+    dest: "/etc/uwsgi/apps-available/{{ app_name }}.ini"
     mode: 0644
     owner: root
     group: root
@@ -11,8 +11,8 @@
 
 - name: Enable uwsgi configuration file
   file:
-    src: /etc/uwsgi/apps-available/tealdb.ini
-    dest: /etc/uwsgi/apps-enabled/tealdb.ini
+    src: "/etc/uwsgi/apps-available/{{ app_name }}.ini"
+    dest: "/etc/uwsgi/apps-enabled/{{ app_name }}.ini"
     state: link
   tags:
     - uwsgi

@@ -40,7 +40,7 @@
     - nginx
 
 - name: Create letsencrypt certificate
-  shell: letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m dan@tangledhelix.com --agree-tos -d {{ inventory_hostname }}
+  shell: "letsencrypt certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ inventory_hostname }}"
   args:
     creates: /etc/letsencrypt/live/{{ inventory_hostname }}
   tags:
@@ -56,7 +56,7 @@
 - name: Nginx tealdb site config
   template:
     src: https.j2
-    dest: /etc/nginx/sites-available/tealdb-https
+    dest: "/etc/nginx/sites-available/{{ app_name }}-https"
     mode: 0644
     owner: root
     group: root
@@ -66,8 +66,8 @@
 
 - name: Enable Nginx tealdb site config
   file:
-    src: /etc/nginx/sites-available/tealdb-https
-    dest: /etc/nginx/sites-enabled/tealdb-https
+    src: "/etc/nginx/sites-available/{{ app_name }}-https"
+    dest: "/etc/nginx/sites-enabled/{{ app_name }}-https"
     state: link
   tags:
     - nginx
